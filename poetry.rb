@@ -5,11 +5,12 @@ module Poetry
   require 'open-uri'
 
   URLS = {
+    base: 'http://www.poetryfoundation.org',
     random: 'http://www.poetryfoundation.org/widget/single_random_poem',
     poem_of_the_day: 'http://www.poetryfoundation.org/widget/home'
   }
 
-  def self.clean_and_strip(str)
+  def self.clean_string(str)
     str.gsub("\302\240", ' ').gsub(/[[:space:]]+/, ' ').strip
   end
 
@@ -19,17 +20,14 @@ module Poetry
 
   def self.get_poem(type = :random)
     page = load_page type
-
-    widg = page.css('div.widget-content')[0].at_css('div.single')
-
-    title  = clean_and_strip widg.css('.title')[0].text
-    author = clean_and_strip widg.css('.sub')[0].text.sub(/^by /i, '')
-    lines  = widg.css('div').map{ |line| clean_and_strip line.text }
+    widg = page.at_css('div.widget-content').at_css('div.single')
+    title_a = widg.at_css('.title')
 
     {
-      lines: lines,
-      title: title,
-      author: author
+      title:  clean_string(title_a.text),
+      author: clean_string(widg.at_css('.sub').text.sub(/^by /i, '')),
+      lines:  widg.css('div').map{ |line| clean_string line.text },
+      url:    "#{URLS[:base]}#{title_a['href']}"
     }
   end
 end
