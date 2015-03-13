@@ -1,11 +1,11 @@
-# TODO get URL to the rest of the poem
-module Poetry
+# TODO filter out boring lines like I.
+module PoetryBot
   require 'rubygems'
   require 'nokogiri'
   require 'open-uri'
 
   URLS = {
-    base: 'http://www.poetryfoundation.org',
+    base:   'http://www.poetryfoundation.org',
     random: 'http://www.poetryfoundation.org/widget/single_random_poem',
     poem_of_the_day: 'http://www.poetryfoundation.org/widget/home'
   }
@@ -14,13 +14,13 @@ module Poetry
     str.gsub("\302\240", ' ').gsub(/[[:space:]]+/, ' ').strip
   end
 
-  def self.load_page(type = :random)
-    Nokogiri::HTML(open(URLS[type]))
+  def self.load_page(url)
+    Nokogiri::HTML(open(url))
   end
 
   def self.get_poem(type = :random)
-    page = load_page type
-    widg = page.at_css('div.widget-content').at_css('div.single')
+    page    = load_page URLS[type]
+    widg    = page.at_css('div.widget-content').at_css('div.single')
     title_a = widg.at_css('.title')
 
     {
@@ -35,3 +35,5 @@ module Poetry
     [ poem_hash[:title], "By #{poem_hash[:author]}" ].concat(poem_hash[:lines]).join('\n')
   end
 end
+
+PoetryBot.poem_to_string(PoetryBot.get_poem).each_line('\n'){ |l| puts l }
