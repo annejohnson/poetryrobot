@@ -1,25 +1,35 @@
-require 'rubygems'
-require 'nokogiri'
-require 'open-uri'
+# TODO get URL to the rest of the poem
+module Poetry
+  require 'rubygems'
+  require 'nokogiri'
+  require 'open-uri'
 
-# TODO
-# debug leading/trailing spacing
-# bring in poem of day
+  URLS = {
+    random: 'http://www.poetryfoundation.org/widget/single_random_poem',
+    poem_of_the_day: 'http://www.poetryfoundation.org/widget/home'
+  }
 
-page = Nokogiri::HTML(open('http://www.poetryfoundation.org/widget/single_random_poem'))
-CONTENT = {
-  of_day: 0,
-  random: 0
-}
+  def self.clean_and_strip(str)
+    str.gsub("\302\240", ' ').gsub(/[[:space:]]+/, ' ').strip
+  end
 
-# random poem
-widg = page.at_css('div.widget-content').at_css('div.single')
+  def self.load_page(type = :random)
+    Nokogiri::HTML(open(URLS[type]))
+  end
 
-title =  widg.css('.title')[0].text
-author = widg.css('.sub')[0].text.sub(/^by /i, '')
-lines = widg.css('div').map{ |line| line.text.split.join(" ") }
-# line.text.sub(/\A[[:space]]+|[[:space:]]+\z/, '') }
+  def self.get_poem(type = :random)
+    page = load_page type
 
-puts("\n#{title}\nby  #{author}\n\n")
+    widg = page.css('div.widget-content')[0].at_css('div.single')
 
-lines.each{ |l| puts(l) }
+    title  = clean_and_strip widg.css('.title')[0].text
+    author = clean_and_strip widg.css('.sub')[0].text.sub(/^by /i, '')
+    lines  = widg.css('div').map{ |line| clean_and_strip line.text }
+
+    {
+      lines: lines,
+      title: title,
+      author: author
+    }
+  end
+end
