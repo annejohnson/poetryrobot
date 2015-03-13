@@ -3,22 +3,23 @@ module PoetryBot
   require 'rubygems'
   require 'nokogiri'
   require 'open-uri'
+  require 'twitter'
 
   URLS = {
-    base:   'http://www.poetryfoundation.org',
-    random: 'http://www.poetryfoundation.org/widget/single_random_poem',
-    poem_of_the_day: 'http://www.poetryfoundation.org/widget/home'
+    base:            'http://www.poetryfoundation.org',
+    poem_of_the_day: 'http://www.poetryfoundation.org/widget/home',
+    random:          'http://www.poetryfoundation.org/widget/single_random_poem'
   }
 
-  def self.clean_string(str)
+  def clean_string(str)
     str.gsub("\302\240", ' ').gsub(/[[:space:]]+/, ' ').strip
   end
 
-  def self.load_page(url)
+  def load_page(url)
     Nokogiri::HTML(open(url))
   end
 
-  def self.get_poem(type = :random)
+  def get_poem(type = :random)
     page    = load_page URLS[type]
     widg    = page.at_css('div.widget-content').at_css('div.single')
     title_a = widg.at_css('.title')
@@ -31,9 +32,23 @@ module PoetryBot
     }
   end
 
-  def self.poem_to_string(poem_hash)
+  def poem_to_string(poem_hash)
     [ poem_hash[:title], "By #{poem_hash[:author]}" ].concat(poem_hash[:lines]).join('\n')
   end
+
+  def poem_to_tweet(poem_hash)
+    " #{poem_hash[:url]}"
+  end
+
+  def filter_lines(lines)
+    lines.reject do |line|
+      line.gsub(/[[:space:]]+/, '').empty?
+    end
+  end
+
+  extend self
 end
 
-PoetryBot.poem_to_string(PoetryBot.get_poem).each_line('\n'){ |l| puts l }
+poem = PoetryBot.poem_to_string(PoetryBot.get_poem)
+puts "#{poem.length}\n\n"
+poem.each_line('\n'){ |l| puts l }
