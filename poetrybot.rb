@@ -1,14 +1,14 @@
-# TODO filter out boring lines like I.
 module PoetryBot
   require 'rubygems'
   require 'nokogiri'
   require 'open-uri'
   require 'twitter'
 
+  MAX_TWEET_LENGTH = 140
   URLS = {
-    base:            'http://www.poetryfoundation.org',
-    poem_of_the_day: 'http://www.poetryfoundation.org/widget/home',
-    random:          'http://www.poetryfoundation.org/widget/single_random_poem'
+    base:            'http://poetryfoundation.org',
+    poem_of_the_day: 'http://poetryfoundation.org/widget/home',
+    random:          'http://poetryfoundation.org/widget/single_random_poem'
   }
 
   def clean_string(str)
@@ -32,23 +32,34 @@ module PoetryBot
     }
   end
 
-  def poem_to_string(poem_hash)
-    [ poem_hash[:title], "By #{poem_hash[:author]}" ].concat(poem_hash[:lines]).join('\n')
-  end
-
   def poem_to_tweet(poem_hash)
-    " #{poem_hash[:url]}"
+    title_and_link = "... #{poem_hash[:title]} by #{poem_hash[:author]} #{poem_hash[:url]}"
+    max_length = MAX_TWEET_LENGTH - title_and_link.length
+
+    # filter lines, join them, and remove a trailing "..."
+    lines = filter_lines(poem_hash[:lines]).join("\n").gsub(/\.\.\.\z/, '')
+    # make sure we don't exceed max_length
+    excerpt = lines[0...max_length]
+    # remove cut-off word fragment if applicable
+    excerpt = (lines[max_length] || " ").match(/[[:space:]]/) ? excerpt : excerpt.gsub(/[[:space:]]\S*\z/, '')
+
+    "#{excerpt}#{title_and_link}"
   end
 
   def filter_lines(lines)
     lines.reject do |line|
-      line.gsub(/[[:space:]]+/, '').empty?
+      # reject a line if it's only whitespace, a number, or a roman numeral
+      line.match(/^[[:space:]]*\z/) || line.match(/^[ivx]+\.?[[:space:]]*\z/i) || line.match(/^\d+\.?[[:space:]]*\z/)
     end
+  end
+
+  def get_tweet(type = :random)
+    poem_to_tweet get_poem(type)
   end
 
   extend self
 end
 
-poem = PoetryBot.poem_to_string(PoetryBot.get_poem)
-puts "#{poem.length}\n\n"
-poem.each_line('\n'){ |l| puts l }
+tweet = PoetryBot.get_tweet
+puts tweet
+puts "Length: #{tweet.length} chars"
