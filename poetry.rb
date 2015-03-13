@@ -30,4 +30,8 @@ module Poetry
       url:    "#{URLS[:base]}#{title_a['href']}"
     }
   end
+
+  def self.poem_to_string(poem_hash)
+    [ poem_hash[:title], "By #{poem_hash[:author]}" ].concat(poem_hash[:lines]).join('\n')
+  end
 end
