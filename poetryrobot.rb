@@ -9,6 +9,7 @@ class PoetryRobot
   MAX_TWEET_LENGTH   = 140
   MAX_SEARCH_RESULTS =  60
   LANGUAGES          = ["en", "fr"]
+  MAX_NUM_HASHTAGS   = 3
   TWEET_QUERY        = "#poetry"
 
   URLS = {
@@ -93,7 +94,10 @@ class PoetryRobot
 
   def get_recent_tweet
     results = @twitter_client.search(TWEET_QUERY, result_type: "recent").take(MAX_SEARCH_RESULTS)
-    results.select{ |r| LANGUAGES.include? r.lang }.max_by &:favorite_count
+    results.select do |r|
+      LANGUAGES.include?(r.lang) &&
+      r.text.split.count{ |word| word[0] == '#' } <= MAX_NUM_HASHTAGS
+    end.max_by &:favorite_count
   end
 
   def retweet
