@@ -2,14 +2,26 @@ load 'poetryrobot.rb'
 
 task default: %w[random_poem]
 
+desc 'Tweet a random poem'
 task :random_poem do
   PoetryRobot.send_tweet
 end
 
+desc 'Tweet the poem of the day'
 task :poem_of_the_day do
   PoetryRobot.send_tweet :poem_of_the_day
 end
 
+desc 'Tweet the contents of a string argument'
+task :tweet, [:text] do |t, args|
+  if args[:text].length <= PoetryRobot::MAX_TWEET_LENGTH
+    PoetryRobot.send_tweet "#{args[:text]}"
+  else
+    puts "Too long to fit in a tweet. Try again."
+  end
+end
+
+desc 'Retweet a poetry-related tweet'
 task :retweet_poem do
   PoetryRobot.retweet
 end

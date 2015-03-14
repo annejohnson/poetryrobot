@@ -76,8 +76,13 @@ module PoetryRobot
     poem_to_tweet get_poem(type)
   end
 
-  def send_tweet(type = :random)
-    twitter_client.update get_tweet(type)
+  def send_tweet(tweet = :random)
+    if tweet.is_a? Symbol
+      twitter_client.update get_tweet(tweet)
+    elsif tweet.is_a? String
+      twitter_client.update(tweet) if tweet <= MAX_TWEET_LENGTH
+      puts("Tweet is too long. Length: #{tweet.length}. Max: #{MAX_TWEET_LENGTH}.") if tweet > MAX_TWEET_LENGTH
+    end
   end
 
   def get_recent_tweet
