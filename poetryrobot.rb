@@ -83,7 +83,11 @@ module PoetryRobot
   end
 
   def retweet
-    twitter_client.retweet(get_recent_tweet.id)
+    twitter_client.retweet get_recent_tweet.id
+  end
+
+  def follow
+    twitter_client.follow get_recent_tweet.user.id
   end
 
   extend self

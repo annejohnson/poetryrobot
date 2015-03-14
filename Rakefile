@@ -13,3 +13,7 @@ end
 task :retweet_poem do
   PoetryRobot.retweet
 end
+
+task :follow_someone do
+  PoetryRobot.follow
+end
