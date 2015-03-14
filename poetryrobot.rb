@@ -109,7 +109,7 @@ class PoetryRobot
   end
 
   def retweet_mentions
-    @twitter_client.search("@#{@creds["username"]}", result_type: "recent").map do |mention|
+    @twitter_client.mentions_timeline.map do |mention|
       begin
         @twitter_client.retweet mention.id
       rescue Twitter::Error::Forbidden # already retweeted
