@@ -26,6 +26,11 @@ task :retweet_poem do
   PoetryRobot.new.retweet
 end
 
+desc 'Retweet recent mentions'
+task :retweet_mentions do
+  PoetryRobot.new.retweet_mentions
+end
+
 desc 'Follow someone who tweeted about #poetry'
 task :follow_someone do
   PoetryRobot.new.follow

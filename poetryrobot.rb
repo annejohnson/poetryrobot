@@ -18,13 +18,12 @@ class PoetryRobot
   }
 
   def initialize
-    creds = credentials["twitter"]
-
+    @creds = credentials["twitter"]
     @twitter_client = Twitter::REST::Client.new do |config|
-      config.consumer_key = creds["consumer_key"]
-      config.consumer_secret = creds["consumer_secret"]
-      config.access_token = creds["access_token"]
-      config.access_token_secret = creds["access_token_secret"]
+      config.consumer_key = @creds["consumer_key"]
+      config.consumer_secret = @creds["consumer_secret"]
+      config.access_token = @creds["access_token"]
+      config.access_token_secret = @creds["access_token_secret"]
     end
   end
 
@@ -103,6 +102,16 @@ class PoetryRobot
 
   def follow
     @twitter_client.follow get_recent_tweet.user.id
+  end
+
+  def retweet_mentions
+    @twitter_client.search("@#{@creds["username"]}", result_type: "recent").map do |mention|
+      begin
+        @twitter_client.retweet mention.id
+      rescue Twitter::Error::Forbidden # already retweeted
+        return # we're finished
+      end
+    end
   end
 
 private
