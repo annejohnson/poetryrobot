@@ -1,8 +1,10 @@
-module PoetryRobot
+class PoetryRobot
   require 'nokogiri'
   require 'open-uri'
   require 'twitter'
   require 'yaml'
+
+  attr_reader :twitter_client
 
   MAX_TWEET_LENGTH   = 140
   MAX_SEARCH_RESULTS =  60
@@ -15,14 +17,10 @@ module PoetryRobot
     random:          'http://poetryfoundation.org/widget/single_random_poem'
   }
 
-  def credentials
-    YAML.load File.open('twitter.yml'){ |f| f.read }
-  end
-
-  def twitter_client
+  def initialize
     creds = credentials["twitter"]
 
-    Twitter::REST::Client.new do |config|
+    @twitter_client = Twitter::REST::Client.new do |config|
       config.consumer_key = creds["consumer_key"]
       config.consumer_secret = creds["consumer_secret"]
       config.access_token = creds["access_token"]
@@ -85,27 +83,34 @@ module PoetryRobot
     poem_hash_to_tweet get_poem_hash(type)
   end
 
-  def send_tweet(tweet = :random)
+  def self.send_tweet(tweet = :random)
+    bot = self.new
     if tweet.is_a? Symbol
-      twitter_client.update get_poem_tweet(tweet)
+      bot.twitter_client.update bot.get_poem_tweet(tweet)
     elsif tweet.is_a? String
-      twitter_client.update(tweet) if tweet <= MAX_TWEET_LENGTH
+      bot.twitter_client.update(tweet) if tweet <= MAX_TWEET_LENGTH
       puts("Tweet is too long. Length: #{tweet.length}. Max: #{MAX_TWEET_LENGTH}.") if tweet > MAX_TWEET_LENGTH
     end
   end
 
   def get_recent_tweet
-    results = twitter_client.search(TWEET_QUERY, result_type: "recent").take(MAX_SEARCH_RESULTS)
+    results = @twitter_client.search(TWEET_QUERY, result_type: "recent").take(MAX_SEARCH_RESULTS)
     results.select{ |r| LANGUAGES.include? r.lang }.max_by &:favorite_count
   end
 
-  def retweet
-    twitter_client.retweet get_recent_tweet.id
+  def self.retweet
+    bot = self.new
+    bot.twitter_client.retweet bot.get_recent_tweet.id
   end
 
-  def follow
-    twitter_client.follow get_recent_tweet.user.id
+  def self.follow
+    bot = self.new
+    bot.twitter_client.follow bot.get_recent_tweet.user.id
   end
 
-  extend self
+private
+
+  def credentials
+    YAML.load File.open('twitter.yml'){ |f| f.read }
+  end
 end
