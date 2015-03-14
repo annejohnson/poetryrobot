@@ -51,8 +51,8 @@ module PoetryRobot
   end
 
   def poem_to_tweet(poem_hash)
-    title_and_link = "... #{poem_hash[:title]} by #{poem_hash[:author]} #{poem_hash[:url]}"
-    max_length = MAX_TWEET_LENGTH - title_and_link.length
+    title_and_link = "#{poem_hash[:title]} by #{poem_hash[:author]} #{poem_hash[:url]}"
+    max_length = MAX_TWEET_LENGTH - title_and_link.length - "... ".length
 
     # filter lines, join them, and remove a trailing "..."
     lines = filter_lines(poem_hash[:lines]).join("\n").gsub(/\.\.\.\z/, '')
@@ -61,7 +61,7 @@ module PoetryRobot
     # remove cut-off word fragment if applicable
     excerpt = (lines[max_length] || " ").match(/[[:space:]]/) ? excerpt : excerpt.gsub(/[[:space:]]\S*\z/, '')
 
-    "#{excerpt}#{title_and_link}"
+    [title_and_link, excerpt + "..."].shuffle.join(" ")
   end
 
   def filter_lines(lines)
