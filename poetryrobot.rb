@@ -5,6 +5,10 @@ module PoetryRobot
   require 'yaml'
 
   MAX_TWEET_LENGTH = 140
+  MAX_SEARCH_RESULTS = 60
+  LANGUAGES = ["en", "fr"]
+  TWEET_QUERY = "#poetry"
+
   URLS = {
     base:            'http://poetryfoundation.org',
     poem_of_the_day: 'http://poetryfoundation.org/widget/home',
@@ -78,8 +82,8 @@ module PoetryRobot
 
   def get_recent_tweet
     client = twitter_client
-    results = client.search("#poetry", result_type: "recent").take(30)
-    results.max_by &:favorite_count
+    results = client.search(TWEET_QUERY, result_type: "recent").take(MAX_SEARCH_RESULTS)
+    results.select{ |r| LANGUAGES.include? r.lang }.max_by &:favorite_count
   end
 
   def retweet
