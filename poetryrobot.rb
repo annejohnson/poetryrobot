@@ -83,12 +83,11 @@ class PoetryRobot
     poem_hash_to_tweet get_poem_hash(type)
   end
 
-  def self.send_tweet(tweet = :random)
-    bot = self.new
+  def send_tweet(tweet = :random)
     if tweet.is_a? Symbol
-      bot.twitter_client.update bot.get_poem_tweet(tweet)
+      @twitter_client.update get_poem_tweet(tweet)
     elsif tweet.is_a? String
-      bot.twitter_client.update(tweet) if tweet <= MAX_TWEET_LENGTH
+      @twitter_client.update(tweet) if tweet <= MAX_TWEET_LENGTH
       puts("Tweet is too long. Length: #{tweet.length}. Max: #{MAX_TWEET_LENGTH}.") if tweet > MAX_TWEET_LENGTH
     end
   end
@@ -98,14 +97,12 @@ class PoetryRobot
     results.select{ |r| LANGUAGES.include? r.lang }.max_by &:favorite_count
   end
 
-  def self.retweet
-    bot = self.new
-    bot.twitter_client.retweet bot.get_recent_tweet.id
+  def retweet
+    @twitter_client.retweet get_recent_tweet.id
   end
 
-  def self.follow
-    bot = self.new
-    bot.twitter_client.follow bot.get_recent_tweet.user.id
+  def follow
+    @twitter_client.follow get_recent_tweet.user.id
   end
 
 private
