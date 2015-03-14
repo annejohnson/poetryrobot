@@ -1,8 +1,9 @@
-module PoetryBot
+module PoetryRobot
   require 'rubygems'
   require 'nokogiri'
   require 'open-uri'
   require 'twitter'
+  require 'yaml'
 
   MAX_TWEET_LENGTH = 140
   URLS = {
@@ -10,6 +11,21 @@ module PoetryBot
     poem_of_the_day: 'http://poetryfoundation.org/widget/home',
     random:          'http://poetryfoundation.org/widget/single_random_poem'
   }
+
+  def credentials
+    YAML.load File.open('twitter.yml'){ |f| f.read }
+  end
+
+  def twitter_client
+    creds = credentials["twitter"]
+
+    Twitter::REST::Client.new do |config|
+      config.consumer_key = creds["consumer_key"]
+      config.consumer_secret = creds["consumer_secret"]
+      config.access_token = creds["access_token"]
+      config.access_token_secret = creds["access_token_secret"]
+    end
+  end
 
   def clean_string(str)
     str.gsub("\302\240", ' ').gsub(/[[:space:]]+/, ' ').strip
@@ -57,9 +73,11 @@ module PoetryBot
     poem_to_tweet get_poem(type)
   end
 
+  def send_tweet
+    twitter_client.update get_tweet
+  end
+
   extend self
 end
 
-tweet = PoetryBot.get_tweet
-puts tweet
-puts "Length: #{tweet.length} chars"
+PoetryRobot.send_tweet

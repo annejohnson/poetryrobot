@@ -1,5 +1,5 @@
 task default: %w[print_poem]
 
 task :print_poem do
-  ruby "poetry.rb"
+  ruby "poetryrobot.rb"
 end
