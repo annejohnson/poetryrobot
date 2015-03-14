@@ -10,6 +10,7 @@ class PoetryRobot
   MAX_SEARCH_RESULTS =  60
   LANGUAGES          = ["en", "fr"]
   MAX_NUM_HASHTAGS   = 3
+  MAX_ATTEMPTS       = 3
   TWEET_QUERY        = "#poem"
 
   URLS = {
@@ -101,7 +102,12 @@ class PoetryRobot
   end
 
   def retweet
-    @twitter_client.retweet get_recent_poem_tweets.max_by(&:favorite_count).id
+    attempts = 0
+    begin
+      @twitter_client.retweet get_recent_poem_tweets.sample.id
+    rescue Twitter::Error::Forbidden
+      retry if (attempts += 1) < MAX_ATTEMPTS
+    end
   end
 
   def follow
