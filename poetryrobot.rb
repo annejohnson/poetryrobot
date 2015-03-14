@@ -30,14 +30,17 @@ module PoetryRobot
     end
   end
 
+  # Remove funky non-ASCII spaces and remove leading/trailing whitespace
   def clean_string(str)
     str.gsub("\302\240", ' ').gsub(/[[:space:]]+/, ' ').strip
   end
 
+  # Gets a page ready for scraping
   def load_page(url)
     Nokogiri::HTML(open(url))
   end
 
+  # Scrapes a poem and constructs a poem hash
   def get_poem(type = :random)
     page    = load_page URLS[type]
     widg    = page.at_css('div.widget-content').at_css('div.single')
@@ -51,6 +54,8 @@ module PoetryRobot
     }
   end
 
+  # Turns a poem hash into a tweet string
+  # example poem_hash: { title: ..., author: ..., lines: [...], url: ... }
   def poem_to_tweet(poem_hash)
     title_and_link = "#{poem_hash[:title]} by #{poem_hash[:author]} #{poem_hash[:url]}"
     max_length = MAX_TWEET_LENGTH - title_and_link.length - "... ".length
@@ -65,10 +70,12 @@ module PoetryRobot
     [title_and_link, excerpt + "..."].shuffle.join(" ")
   end
 
+  # Removes lines that are only whitespace, a number, or a roman numeral
   def filter_lines(lines)
     lines.reject do |line|
-      # reject a line if it's only whitespace, a number, or a roman numeral
-      line.match(/^[[:space:]]*\z/) || line.match(/^[ivx]+\.?[[:space:]]*\z/i) || line.match(/^\d+\.?[[:space:]]*\z/)
+      line.match(/^[[:space:]]*\z/) || # whitespace
+      line.match(/^[ivx]+\.?[[:space:]]*\z/i) || # roman numeral
+      line.match(/^\d+\.?[[:space:]]*\z/) # number
     end
   end
 
