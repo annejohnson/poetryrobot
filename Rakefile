@@ -1,5 +1,15 @@
-task default: %w[print_poem]
+load 'poetryrobot.rb'
 
-task :print_poem do
-  ruby "poetryrobot.rb"
+task default: %w[random_poem]
+
+task :random_poem do
+  PoetryRobot.send_tweet
+end
+
+task :poem_of_the_day do
+  PoetryRobot.send_tweet :poem_of_the_day
+end
+
+task :retweet_poem do
+  PoetryRobot.retweet
 end

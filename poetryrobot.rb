@@ -1,7 +1,4 @@
-# TODO vary structure of poem tweets
-# TODO retweet new mentions
 module PoetryRobot
-  require 'rubygems'
   require 'nokogiri'
   require 'open-uri'
   require 'twitter'
@@ -75,11 +72,19 @@ module PoetryRobot
     poem_to_tweet get_poem(type)
   end
 
-  def send_tweet
-    twitter_client.update get_tweet
+  def send_tweet(type = :random)
+    twitter_client.update get_tweet(type)
+  end
+
+  def get_recent_tweet
+    client = twitter_client
+    results = client.search("#poetry", result_type: "recent").take(30)
+    results.max_by &:favorite_count
+  end
+
+  def retweet
+    twitter_client.retweet(get_recent_tweet.id)
   end
 
   extend self
 end
-
-PoetryRobot.send_tweet
