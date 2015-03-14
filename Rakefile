@@ -35,3 +35,8 @@ desc 'Follow someone who tweeted about #poetry'
 task :follow_someone do
   PoetryRobot.new.follow
 end
+
+desc 'Reply to someone\'s poem tweet'
+task :reply_to_someone do
+  PoetryRobot.new.reply_to_a_poem
+end

@@ -10,7 +10,7 @@ class PoetryRobot
   MAX_SEARCH_RESULTS =  60
   LANGUAGES          = ["en", "fr"]
   MAX_NUM_HASHTAGS   = 3
-  TWEET_QUERY        = "#poetry"
+  TWEET_QUERY        = "#poem"
 
   URLS = {
     base:            'http://poetryfoundation.org',
@@ -92,20 +92,20 @@ class PoetryRobot
     end
   end
 
-  def get_recent_tweet
+  def get_recent_poem_tweets
     results = @twitter_client.search(TWEET_QUERY, result_type: "recent").take(MAX_SEARCH_RESULTS)
     results.select do |r|
       LANGUAGES.include?(r.lang) &&
       r.text.split.count{ |word| word[0] == '#' } <= MAX_NUM_HASHTAGS
-    end.max_by &:favorite_count
+    end
   end
 
   def retweet
-    @twitter_client.retweet get_recent_tweet.id
+    @twitter_client.retweet get_recent_poem_tweets.max_by(&:favorite_count).id
   end
 
   def follow
-    @twitter_client.follow get_recent_tweet.user.id
+    @twitter_client.follow get_recent_poem_tweets.max_by(&:favorite_count).user.id
   end
 
   def retweet_mentions
@@ -115,6 +115,21 @@ class PoetryRobot
       rescue Twitter::Error::Forbidden # already retweeted
         return # we're finished
       end
+    end
+  end
+
+  def get_multiline_poem_tweets
+    get_recent_poem_tweets.select { |r| r.text.match(/.\n./) }
+  end
+
+  def reply_to_a_poem
+    return unless poem = get_multiline_poem_tweets.sample
+
+    # don't favorite+reply to a tweet if we've already done so
+    my_tweets = @twitter_client.user_timeline(@twitter_client.user(@creds["username"]), count: MAX_SEARCH_RESULTS)
+    if my_tweets.select{ |tweet| tweet.in_reply_to_status_id == poem.id }.empty?
+      @twitter_client.favorite poem
+      @twitter_client.update("Thank you for tweeting poetry, @#{poem.user.screen_name}!", in_reply_to_status_id: poem.id )
     end
   end
 
