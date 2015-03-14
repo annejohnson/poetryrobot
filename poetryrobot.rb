@@ -1,3 +1,5 @@
+# TODO vary structure of poem tweets
+# TODO retweet new mentions
 module PoetryRobot
   require 'rubygems'
   require 'nokogiri'
