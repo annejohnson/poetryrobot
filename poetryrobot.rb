@@ -11,7 +11,6 @@ class PoetryRobot
   LANGUAGES          = ["en", "fr"]
   MAX_NUM_HASHTAGS   = 3
   MAX_ATTEMPTS       = 3
-  TWEET_QUERY        = "#poem"
 
   URLS = {
     base:            'http://poetryfoundation.org',
@@ -93,25 +92,29 @@ class PoetryRobot
     end
   end
 
-  def get_recent_poem_tweets
-    results = @twitter_client.search(TWEET_QUERY, result_type: "recent").take(MAX_SEARCH_RESULTS)
+  def get_recent_tweets(query)
+    results = @twitter_client.search(query, result_type: "recent").take(MAX_SEARCH_RESULTS)
     results.select do |r|
       LANGUAGES.include?(r.lang) &&
       r.text.split.count{ |word| word[0] == '#' } <= MAX_NUM_HASHTAGS
     end
   end
 
+  def random_query_string
+    "##{['poetry', 'poem', 'haiku', 'spokenword', 'micropoem', 'micropoetry'].sample}"
+  end
+
   def retweet
     attempts = 0
     begin
-      @twitter_client.retweet get_recent_poem_tweets.sample.id
+      @twitter_client.retweet get_recent_tweets(random_query_string).sample.id
     rescue Twitter::Error::Forbidden
       retry if (attempts += 1) < MAX_ATTEMPTS
     end
   end
 
   def follow
-    @twitter_client.follow get_recent_poem_tweets.max_by(&:favorite_count).user.id
+    @twitter_client.follow get_recent_tweets(random_query_string).max_by(&:favorite_count).user.id
   end
 
   def retweet_mentions
@@ -125,7 +128,7 @@ class PoetryRobot
   end
 
   def get_multiline_poem_tweets
-    get_recent_poem_tweets.select { |r| r.text.match(/.\n./) }
+    get_recent_tweets("#poem").select { |r| r.text.match(/.\n./) }
   end
 
   def reply_to_a_poem
