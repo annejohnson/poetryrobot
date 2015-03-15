@@ -101,7 +101,7 @@ class PoetryRobot
   end
 
   def random_query_string
-    "##{['poetry', 'poem', 'haiku', 'spokenword', 'micropoem', 'micropoetry'].sample}"
+    "##{['poetry', 'poem', 'spokenword'].sample}"
   end
 
   def retweet
