@@ -107,7 +107,7 @@ class PoetryRobot
   def retweet
     attempts = 0
     begin
-      @twitter_client.retweet get_recent_tweets(random_query_string).sample.id
+      @twitter_client.retweet get_recent_tweets(random_query_string).max_by(&:favorite_count).id
     rescue Twitter::Error::Forbidden
       retry if (attempts += 1) < MAX_ATTEMPTS
     end
