@@ -150,6 +150,14 @@ class PoetryRobot
     end
   end
 
+  def follow_followers
+    already_following = @twitter_client.following.map(&:id)
+    @twitter_client.followers.each do |follower|
+      next if already_following.find{ |id| id == follower.id }
+      @twitter_client.follow(follower.id)
+    end
+  end
+
 private
 
   def credentials
