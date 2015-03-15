@@ -92,16 +92,21 @@ class PoetryRobot
     end
   end
 
+  def is_spammy_tweet?(tweet)
+    tweet.text.match(/http:\/\//i) &&
+    tweet.text.match(/(buy)|(e-?book)|(order)|(press)/i)
+  end
+
   def get_recent_tweets(query)
     results = @twitter_client.search(query, result_type: "recent").take(MAX_SEARCH_RESULTS)
     results.select do |r|
       LANGUAGES.include?(r.lang) &&
       r.text.split.count{ |word| word[0] == '#' } <= MAX_NUM_HASHTAGS
-    end
+    end.reject{ |t| is_spammy_tweet? t }
   end
 
   def random_query_string
-    "##{['poetry', 'poem', 'spokenword'].sample}"
+    "##{['poetry', 'poem'].sample}"
   end
 
   def retweet
