@@ -131,14 +131,22 @@ class PoetryRobot
     get_recent_tweets("#poem").select { |r| r.text.match(/.\n./) }
   end
 
+  def get_random_encouragement(username)
+    ["Thank you for tweeting poetry, @#{username}!",
+     "@#{username}, write on!",
+     "Art is long, but time is short <3 Thank you, @#{username}",
+     "thanks, @#{username}, for the quality verse",
+     "@#{username}, you've poetry'd your way to my metal heart"].sample
+  end
+
   def reply_to_a_poem
-    return unless poem = get_multiline_poem_tweets.sample
+    return unless poem = get_multiline_poem_tweets.reject{ |t| t.retweet? }.sample
 
     # don't favorite+reply to a tweet if we've already done so
     my_tweets = @twitter_client.user_timeline(@twitter_client.user(@creds["username"]), count: MAX_SEARCH_RESULTS)
     if my_tweets.select{ |tweet| tweet.in_reply_to_status_id == poem.id }.empty?
       @twitter_client.favorite poem
-      @twitter_client.update("Thank you for tweeting poetry, @#{poem.user.screen_name}!", in_reply_to_status_id: poem.id )
+      @twitter_client.update(get_random_encouragement(poem.user.screen_name), in_reply_to_status_id: poem.id)
     end
   end
 
