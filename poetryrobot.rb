@@ -138,9 +138,6 @@ class PoetryRobot
 
   def get_random_encouragement(username)
     ["Thank you for tweeting poetry, @#{username}!",
-     "@#{username}, write on!",
-     "Art is long, but time is short <3 Thank you, @#{username}",
-     "thanks, @#{username}, for the quality verse",
      "@#{username}, you've poetry'd your way to my metal heart"].sample
   end
 
