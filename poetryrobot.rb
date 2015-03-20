@@ -4,19 +4,19 @@ class PoetryRobot
   require 'twitter'
   require 'yaml'
 
-  attr_reader :twitter_client
-
   MAX_TWEET_LENGTH   = 140
   MAX_SEARCH_RESULTS =  60
   LANGUAGES          = ["en", "fr"]
   MAX_NUM_HASHTAGS   = 3
-  MAX_ATTEMPTS       = 3
+  MAX_ATTEMPTS       = 2
 
   URLS = {
     base:            'http://poetryfoundation.org',
     poem_of_the_day: 'http://poetryfoundation.org/widget/home',
     random:          'http://poetryfoundation.org/widget/single_random_poem'
   }
+
+  attr_reader :twitter_client
 
   def initialize
     @creds = credentials["twitter"]
@@ -38,7 +38,8 @@ class PoetryRobot
     Nokogiri::HTML(open(url))
   end
 
-  # Scrapes a poem and constructs a poem hash
+  # Scrapes a poem (type :random or :poem_of_the_day) from poetryfoundation.org
+  # and constructs a poem hash
   def get_poem_hash(type = :random)
     raise "Invalid poem type #{type}" unless [:random, :poem_of_the_day].include?(type)
 
@@ -79,24 +80,27 @@ class PoetryRobot
     [title_and_link, excerpt + "..."].shuffle.join(" ")
   end
 
-  def get_poem_tweet(type = :random)
+  def create_poem_tweet(type = :random)
     poem_hash_to_tweet get_poem_hash(type)
   end
 
   def send_tweet(tweet = :random)
     if tweet.is_a? Symbol
-      @twitter_client.update get_poem_tweet(tweet)
+      @twitter_client.update create_poem_tweet(tweet)
     elsif tweet.is_a? String
       @twitter_client.update(tweet) if tweet <= MAX_TWEET_LENGTH
       puts("Tweet is too long. Length: #{tweet.length}. Max: #{MAX_TWEET_LENGTH}.") if tweet > MAX_TWEET_LENGTH
     end
   end
 
+  # A tweet looks spammy if it contains a link plus a fishy word, like "e-book"
   def is_spammy_tweet?(tweet)
     tweet.text.match(/http:\/\//i) &&
     tweet.text.match(/(buy)|(e-?book)|(order)|(press)/i)
   end
 
+  # Gets a bunch of recent tweets that match the query and pass through language, max # hashtags,
+  # and spammy filters
   def get_recent_tweets(query)
     results = @twitter_client.search(query, result_type: "recent").take(MAX_SEARCH_RESULTS)
     results.select do |r|
@@ -105,20 +109,20 @@ class PoetryRobot
     end.reject{ |t| is_spammy_tweet? t }
   end
 
-  def random_query_string
+  def random_hashtag_string
     "##{['poetry', 'poem'].sample}"
   end
 
-  def retweet
+  def retweet_a_poet
     attempts = 0
     begin
-      @twitter_client.retweet get_recent_tweets(random_query_string).max_by(&:favorite_count).id
+      @twitter_client.retweet get_recent_tweets(random_hashtag_string).max_by(&:favorite_count).id
     rescue Twitter::Error::Forbidden
       retry if (attempts += 1) < MAX_ATTEMPTS
     end
   end
 
-  def follow
+  def follow_a_poet
     @twitter_client.follow get_recent_tweets(random_query_string).max_by(&:favorite_count).user.id
   end
 
@@ -141,12 +145,13 @@ class PoetryRobot
      "@#{username}, you've poetry'd your way to my metal heart"].sample
   end
 
-  def reply_to_a_poem
+  def reply_to_a_poet
+    # only reply to original tweets, not retweets
     return unless poem = get_multiline_poem_tweets.reject{ |t| t.retweet? }.sample
 
-    # don't favorite+reply to a tweet if we've already done so
+    # don't favorite or reply to a tweet if we've already done so
     my_tweets = @twitter_client.user_timeline(@twitter_client.user(@creds["username"]), count: MAX_SEARCH_RESULTS)
-    if my_tweets.select{ |tweet| tweet.in_reply_to_status_id == poem.id }.empty?
+    if my_tweets.none?{ |tweet| tweet.in_reply_to_status_id == poem.id }
       @twitter_client.favorite poem
       @twitter_client.update(get_random_encouragement(poem.user.screen_name), in_reply_to_status_id: poem.id)
     end
