@@ -1,7 +1,7 @@
 class PoetryRobot
   require 'twitter'
   require 'yaml'
-  load 'poemscraper.rb'
+  load 'poem_scraper.rb'
 
   MAX_TWEET_LENGTH   = 140
   MAX_SEARCH_RESULTS =  60

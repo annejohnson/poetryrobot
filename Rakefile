@@ -1,4 +1,4 @@
-load 'poetryrobot.rb'
+load 'poetry_robot.rb'
 
 task default: %w[random_poem]
 
