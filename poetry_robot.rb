@@ -7,6 +7,7 @@ class PoetryRobot
   MAX_SEARCH_RESULTS =  60
   LANGUAGES          = ["en", "fr"]
   MAX_NUM_HASHTAGS   = 3
+  MAX_NUM_MENTIONS   = 1
   MAX_ATTEMPTS       = 2
 
   def initialize
@@ -44,7 +45,7 @@ class PoetryRobot
   def retweet_mentions
     @twitter_client.mentions_timeline.map do |mention|
       begin
-        @twitter_client.retweet mention.id
+        @twitter_client.retweet(mention.id) unless contains_link?(mention)
       rescue Twitter::Error::Forbidden # already retweeted
         return # we're finished
       end
@@ -117,8 +118,20 @@ private
 
   # A tweet looks spammy if it contains a link plus a fishy word, like "e-book"
   def is_spammy_tweet?(tweet)
-    tweet.text.match(/http:\/\//i) &&
+    contains_link?(tweet) &&
     tweet.text.match(/(buy)|(e-?book)|(order)|(press)/i)
+  end
+
+  def is_sketchy_tweet?(tweet)
+    tweet.text.match(/(fuck)|(fetish)/i) # TODO more to come
+  end
+
+  def has_too_many_mentions?(tweet)
+    tweet.text.split.count{ |word| word[0] == '@' } > MAX_NUM_MENTIONS
+  end
+
+  def contains_link?(tweet)
+    tweet.text.match(/http:\/\//i)
   end
 
   # Gets a bunch of recent tweets that match the query and pass through language, max # hashtags,
@@ -128,7 +141,7 @@ private
     results.select do |r|
       LANGUAGES.include?(r.lang) &&
       r.text.split.count{ |word| word[0] == '#' } <= MAX_NUM_HASHTAGS
-    end.reject{ |t| is_spammy_tweet? t }
+    end.reject{ |t| is_spammy_tweet?(t) || is_sketchy_tweet?(t) || has_too_many_mentions?(t) }
   end
 
   def random_hashtag_string
