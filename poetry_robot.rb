@@ -45,7 +45,9 @@ class PoetryRobot
   def retweet_mentions
     @twitter_client.mentions_timeline.map do |mention|
       begin
-        @twitter_client.retweet(mention.id) unless contains_link?(mention)
+        unless contains_link?(mention) || has_too_many_mentions?(mention) || is_spammy_tweet?(mention) || is_sketchy_tweet?(mention)
+          @twitter_client.retweet(mention.id)
+        end
       rescue Twitter::Error::Forbidden # already retweeted
         return # we're finished
       end
