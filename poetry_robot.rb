@@ -5,10 +5,10 @@ class PoetryRobot
 
   MAX_TWEET_LENGTH   = 140
   MAX_SEARCH_RESULTS =  60
+  MAX_NUM_HASHTAGS   =   3
+  MAX_NUM_MENTIONS   =   1
+  MAX_ATTEMPTS       =   2
   LANGUAGES          = ["en", "fr"]
-  MAX_NUM_HASHTAGS   = 3
-  MAX_NUM_MENTIONS   = 1
-  MAX_ATTEMPTS       = 2
 
   def initialize
     @creds = credentials["twitter"]
@@ -43,11 +43,9 @@ class PoetryRobot
   end
 
   def retweet_mentions
-    @twitter_client.mentions_timeline.map do |mention|
+    filter_mentions(@twitter_client.mentions_timeline).map do |mention|
       begin
-        unless contains_link?(mention) || has_too_many_mentions?(mention) || is_spammy_tweet?(mention) || is_sketchy_tweet?(mention)
-          @twitter_client.retweet(mention.id)
-        end
+        @twitter_client.retweet(mention.id)
       rescue Twitter::Error::Forbidden # already retweeted
         return # we're finished
       end
@@ -125,25 +123,45 @@ private
   end
 
   def is_sketchy_tweet?(tweet)
-    tweet.text.match(/(fuck)|(fetish)/i) # TODO more to come
+    tweet.text.match(/(fuck)|(fetish)|(ass)|(gamergate)|(shit)|(bitch)|(cunt)/i) # TODO more to come :(
   end
 
   def has_too_many_mentions?(tweet)
     tweet.text.split.count{ |word| word[0] == '@' } > MAX_NUM_MENTIONS
   end
 
+  def has_too_many_hashtags?(tweet)
+    tweet.text.split.count{ |word| word[0] == '#' } > MAX_NUM_HASHTAGS
+  end
+
   def contains_link?(tweet)
     tweet.text.match(/http:\/\//i)
+  end
+
+  def filter_recent_tweets(tweets)
+    tweets.select do |t|
+      LANGUAGES.include?(t.lang)
+    end.reject do |t|
+      is_spammy_tweet?(t) || is_sketchy_tweet?(t) ||
+      has_too_many_mentions?(t) || has_too_many_hashtags?(t)
+    end
+  end
+
+  def filter_mentions(tweets)
+    tweets.select do |t|
+      LANGUAGES.include?(t.lang)
+    end.reject do |t|
+      is_spammy_tweet?(t) || is_sketchy_tweet?(t) ||
+      has_too_many_mentions?(t) || has_too_many_hashtags?(t) ||
+      contains_link?(t)
+    end
   end
 
   # Gets a bunch of recent tweets that match the query and pass through language, max # hashtags,
   # and spammy filters
   def get_recent_tweets(query)
     results = @twitter_client.search(query, result_type: "recent").take(MAX_SEARCH_RESULTS)
-    results.select do |r|
-      LANGUAGES.include?(r.lang) &&
-      r.text.split.count{ |word| word[0] == '#' } <= MAX_NUM_HASHTAGS
-    end.reject{ |t| is_spammy_tweet?(t) || is_sketchy_tweet?(t) || has_too_many_mentions?(t) }
+    filter_recent_tweets(results)
   end
 
   def random_hashtag_string
