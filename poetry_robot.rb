@@ -123,7 +123,7 @@ private
   end
 
   def is_sketchy_tweet?(tweet)
-    tweet.text.match(/(fuck)|(fetish)|(ass)|(gamergate)|(shit)|(bitch)|(cunt)/i) # TODO more to come :(
+    tweet.text.match(/(fuck)|(fetish)|(ass)|(gamergate)|(shit)|(bitch)|(cunt)|(rape)/i) # TODO more to come :(
   end
 
   def has_too_many_mentions?(tweet)
