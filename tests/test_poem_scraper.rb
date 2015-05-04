@@ -19,7 +19,22 @@ class TestPoemScraper < MiniTest::Unit::TestCase
   def test_get_poem_hash
     poem_hash = @scraper.get_poem_hash
     assert_equal poem_hash.keys.sort, [:author, :lines, :title, :url].sort
-    assert_match /^https?:\/\/[\S]+/i, poem_hash[:url]
-    assert_instance_of Array, poem_hash[:lines]
+    validate_url poem_hash[:url]
+    validate_lines poem_hash[:lines]
+
+    poem_hash.values.select { |val| val.is_a? String }.each do |val|
+      refute_empty val.strip
+    end
+  end
+
+private
+
+  def validate_lines(lines)
+    assert_instance_of Array, lines
+    refute_empty lines
+  end
+
+  def validate_url(url)
+    assert_match /^https?:\/\/[\S]+/i, url
   end
 end
