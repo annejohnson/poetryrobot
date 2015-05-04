@@ -18,3 +18,8 @@ end
     PoetryRobot.new.send task_name
   end
 end
+
+desc 'Run tests'
+task :test do
+  system("ruby #{__dir__}/tests/test_poem_scraper.rb")
+end
