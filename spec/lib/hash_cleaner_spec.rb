@@ -1,4 +1,4 @@
-require './hash_cleaner.rb'
+require './spec/spec_helper.rb'
 
 describe HashCleaner do
   describe '#clean' do

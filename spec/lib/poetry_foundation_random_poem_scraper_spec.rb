@@ -1,4 +1,4 @@
-require './poetry_foundation_random_poem_scraper.rb'
+require './spec/spec_helper.rb'
 
 describe PoetryFoundationRandomPoemScraper do
   describe '#get_poem_hash' do

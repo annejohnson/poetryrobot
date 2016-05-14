@@ -1,4 +1,4 @@
-require './poem_scraper.rb'
+require_relative 'poem_scraper.rb'
 
 class PoetryFoundationRandomPoemScraper < PoemScraper
   BASE_URL = 'http://www.poetryfoundation.org'.freeze

@@ -1,6 +1,6 @@
 require 'nokogiri'
 require 'open-uri'
-require './hash_cleaner.rb'
+require_relative 'hash_cleaner.rb'
 
 class PoemScraper
   attr_reader :hash_cleaner

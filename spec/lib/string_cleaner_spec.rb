@@ -1,4 +1,4 @@
-require './string_cleaner.rb'
+require './spec/spec_helper.rb'
 
 describe StringCleaner do
   describe '#clean' do
