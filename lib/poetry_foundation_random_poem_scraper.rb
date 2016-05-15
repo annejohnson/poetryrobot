@@ -1,4 +1,6 @@
 require_relative 'poem_scraper.rb'
+require 'open-uri'
+require 'nokogiri'
 
 class PoetryFoundationRandomPoemScraper < PoemScraper
   BASE_URL = 'http://www.poetryfoundation.org'.freeze
@@ -11,6 +13,7 @@ class PoetryFoundationRandomPoemScraper < PoemScraper
   def get_raw_poem_hash
     url = get_url
     page = get_page(url)
+
     {
       title: get_title_from_page(page),
       author: get_author_from_page(page),
