@@ -39,7 +39,7 @@ class PoetryRobot
                                            sample
     return unless poem_tweet
 
-    tweet_ids_already_replied_to = twitter_client.user_timeline.map(&:in_reply_to_status_id)
+    tweet_ids_already_replied_to = twitter_client.reply_tweets.map(&:in_reply_to_status_id)
     unless tweet_ids_already_replied_to.include?(poem_tweet.id)
       twitter_client.favorite(poem_tweet)
       twitter_client.tweet(

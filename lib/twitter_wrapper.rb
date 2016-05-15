@@ -51,11 +51,17 @@ class TwitterWrapper
     )
   end
 
-  def user_timeline
+  def tweets
     twitter_client.user_timeline(
       twitter_client.user(username),
       count: @max_num_tweets_per_query
     )
+  end
+
+  def reply_tweets
+    tweets.select do |tweet|
+      tweet.in_reply_to_status_id.to_s.match(/\d+/)
+    end
   end
 
   def username
