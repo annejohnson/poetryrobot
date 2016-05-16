@@ -1,9 +1,9 @@
 require_relative 'twitter_wrapper.rb'
 
 class TwitterTopicRobot
-  def initialize(twitter_content_preparer)
+  def initialize(twitter_content_preparer, credentials)
     @twitter_content_preparer = twitter_content_preparer
-    @twitter_client = TwitterWrapper.new
+    @twitter_client = TwitterWrapper.new(credentials)
   end
 
   def tweet

@@ -1,4 +1,5 @@
 require './lib/poetry_robot.rb'
+require 'yaml'
 
 [
   :tweet,
@@ -10,8 +11,13 @@ require './lib/poetry_robot.rb'
 ].each do |task_name|
   desc task_name.to_s.gsub('_', ' ').capitalize
   task task_name do
+    credentials = YAML.load(
+                    File.open('twitter.yml', &:read)
+                  )['twitter']
+
     TwitterTopicRobot.new(
-      PoetryContentPreparer.new
+      PoetryContentPreparer.new,
+      credentials
     ).send task_name
   end
 end

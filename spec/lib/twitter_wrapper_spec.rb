@@ -1,6 +1,15 @@
 require './spec/spec_helper.rb'
+require 'yaml'
 
 describe TwitterWrapper do
+  let(:credentials) do
+    YAML.load(
+      File.open('twitter.yml', &:read)
+    )['twitter']
+  end
+
+  subject { described_class.new(credentials) }
+
   let(:test_topic) { 'elephant' }
 
   describe '#max_tweet_length' do

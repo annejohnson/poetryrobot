@@ -1,5 +1,4 @@
 require 'twitter'
-require 'yaml'
 require_relative 'tweet_filterer.rb'
 
 class TwitterWrapper
@@ -12,7 +11,8 @@ class TwitterWrapper
                  :following,
                  :followers
 
-  def initialize
+  def initialize(credentials)
+    @credentials = Hash[credentials.map { |k, v| [k.to_s, v] }]
     @tweet_filterer = TweetFilterer.new
     @max_num_tweets_per_query = 60
   end
@@ -70,11 +70,7 @@ class TwitterWrapper
 
   private
 
-  def credentials
-    @credentials ||= YAML.load(
-      File.open('twitter.yml', &:read)
-    )['twitter']
-  end
+  attr_reader :credentials
 
   def filter_tweets(tweets, allow_links: true)
     allowed_languages = ['en']
