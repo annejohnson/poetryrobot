@@ -17,7 +17,7 @@ class PoetryContentPreparer < Twitter::ContentPreparer::Base
   private
 
   def poem_scraper
-    PoetryFoundationRandomPoemScraper.new
+    Poetry::Scraper::PoetryFoundationScraper.new
   end
 
   def get_poem_hash

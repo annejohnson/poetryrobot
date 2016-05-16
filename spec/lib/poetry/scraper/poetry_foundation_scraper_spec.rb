@@ -1,6 +1,6 @@
 require './spec/spec_helper.rb'
 
-describe PoetryFoundationRandomPoemScraper do
+describe Poetry::Scraper::PoetryFoundationScraper do
   describe '#get_poem_hash' do
     let(:result) { subject.get_poem_hash }
 
