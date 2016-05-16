@@ -2,7 +2,7 @@ class PoemScraper
   attr_reader :hash_cleaner
 
   def initialize
-    @hash_cleaner = HashCleaner.new
+    @hash_cleaner = Utils::HashCleaner.new
   end
 
   def get_poem_hash

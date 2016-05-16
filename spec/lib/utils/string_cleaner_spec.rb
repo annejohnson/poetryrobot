@@ -1,6 +1,6 @@
 require './spec/spec_helper.rb'
 
-describe StringCleaner do
+describe Utils::StringCleaner do
   describe '#clean' do
     let(:dirty_string) { " \t cray  string \n" }
     let(:clean_string) { 'cray string' }

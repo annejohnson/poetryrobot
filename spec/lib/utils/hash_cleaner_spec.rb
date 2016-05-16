@@ -1,6 +1,6 @@
 require './spec/spec_helper.rb'
 
-describe HashCleaner do
+describe Utils::HashCleaner do
   describe '#clean' do
     let(:dirty_hash) do
       {
