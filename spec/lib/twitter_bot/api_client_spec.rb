@@ -2,13 +2,7 @@ require './spec/spec_helper.rb'
 require 'yaml'
 
 describe TwitterBot::ApiClient do
-  let(:credentials) do
-    YAML.load(
-      File.open('twitter.yml', &:read)
-    )['twitter']
-  end
-
-  subject { described_class.new(credentials) }
+  subject { described_class.new(twitter_credentials) }
 
   let(:test_topic) { 'elephant' }
 
