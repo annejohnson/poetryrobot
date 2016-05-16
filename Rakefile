@@ -16,7 +16,7 @@ require 'yaml'
                   )['twitter']
 
     TwitterBot::TopicBot.new(
-      Poetry::ContentPreparer.new,
+      TwitterBot::ContentPreparer::Poetry.new,
       credentials
     ).send task_name
   end

@@ -1,6 +1,6 @@
 require './spec/spec_helper.rb'
 
-describe Poetry::ContentPreparer do
+describe TwitterBot::ContentPreparer::Poetry do
   describe '#prepare_tweet' do
     let(:tweet) { subject.prepare_tweet }
 
