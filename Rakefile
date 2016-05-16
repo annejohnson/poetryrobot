@@ -15,7 +15,7 @@ require 'yaml'
                     File.open('twitter.yml', &:read)
                   )['twitter']
 
-    TwitterTopicRobot.new(
+    Twitter::TopicRobot.new(
       PoetryContentPreparer.new,
       credentials
     ).send task_name

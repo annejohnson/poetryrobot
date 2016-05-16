@@ -14,7 +14,7 @@ module Twitter
 
     def initialize(credentials)
       @credentials = Hash[credentials.map { |k, v| [k.to_s, v] }]
-      @tweet_filterer = TweetFilterer.new
+      @tweet_filterer = Twitter::TweetFilterer.new
       @max_num_tweets_per_query = 60
     end
 

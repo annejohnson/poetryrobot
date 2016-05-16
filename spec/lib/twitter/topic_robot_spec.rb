@@ -1,8 +1,8 @@
 require './spec/spec_helper.rb'
 
-describe TwitterTopicRobot do
+describe Twitter::TopicRobot do
   let(:content_preparer) { PoetryContentPreparer.new }
-  let(:robot) { TwitterTopicRobot.new(content_preparer) }
+  let(:robot) { described_class.new(content_preparer) }
 
   describe '#tweet' do
     it 'tweets'
