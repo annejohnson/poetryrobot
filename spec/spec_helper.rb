@@ -1,4 +1,6 @@
 require './lib/poetry_robot.rb'
+require './spec/shared_examples.rb'
+
 require 'vcr'
 
 VCR.configure do |c|
