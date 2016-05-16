@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'nokogiri'
 
-class PoetryFoundationRandomPoemScraper < PoemScraper
+class PoetryFoundationRandomPoemScraper < Poetry::Scraper::Base
   BASE_URL = 'http://www.poetryfoundation.org'.freeze
 
   MIN_ID = 43000
