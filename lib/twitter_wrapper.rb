@@ -1,5 +1,4 @@
 require 'twitter'
-require_relative 'tweet_filterer.rb'
 
 class TwitterWrapper
   extend Forwardable

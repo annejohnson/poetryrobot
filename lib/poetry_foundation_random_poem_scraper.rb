@@ -1,4 +1,3 @@
-require_relative 'poem_scraper.rb'
 require 'open-uri'
 require 'nokogiri'
 

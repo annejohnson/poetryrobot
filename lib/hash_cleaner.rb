@@ -1,5 +1,3 @@
-require_relative 'string_cleaner.rb'
-
 class HashCleaner
   attr_reader :string_cleaner
 

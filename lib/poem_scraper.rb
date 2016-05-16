@@ -1,5 +1,3 @@
-require_relative 'hash_cleaner.rb'
-
 class PoemScraper
   attr_reader :hash_cleaner
 
@@ -14,7 +12,7 @@ class PoemScraper
   end
 
   def get_raw_poem_hash
-    raise 'Please implement in a child class'
+    raise NotImplementedError.new('Please implement in a child class')
   end
 
   private
