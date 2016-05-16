@@ -1,7 +1,5 @@
 module Utils
   class HashCleaner
-    attr_reader :string_cleaner
-
     def initialize
       @string_cleaner = Utils::StringCleaner.new
     end
@@ -20,6 +18,8 @@ module Utils
     end
 
     private
+
+    attr_reader :string_cleaner
 
     def clean_string_collection(str_collection)
       str_collection.map { |str| clean_string(str) }.

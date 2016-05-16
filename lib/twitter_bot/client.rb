@@ -41,7 +41,7 @@ module TwitterBot
         twitter_client.search(
           query_str,
           result_type: 'recent'
-        ).take(@max_num_tweets_per_query)
+        ).take(max_num_tweets_per_query)
       )
     end
 
@@ -55,7 +55,7 @@ module TwitterBot
     def tweets
       twitter_client.user_timeline(
         twitter_client.user(username),
-        count: @max_num_tweets_per_query
+        count: max_num_tweets_per_query
       )
     end
 
@@ -71,13 +71,15 @@ module TwitterBot
 
     private
 
-    attr_reader :credentials
+    attr_reader :tweet_filterer,
+                :credentials,
+                :max_num_tweets_per_query
 
     def filter_tweets(tweets, allow_links: true)
       allowed_languages = ['en']
       tweets.select do |tweet|
         allowed_languages.include?(tweet.lang) &&
-          @tweet_filterer.acceptable_tweet?(tweet.text, allow_links: allow_links)
+          tweet_filterer.acceptable_tweet?(tweet.text, allow_links: allow_links)
       end
     end
 

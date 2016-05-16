@@ -1,8 +1,6 @@
 module Poetry
   module Scraper
     class Base
-      attr_reader :hash_cleaner
-
       def initialize
         @hash_cleaner = Utils::HashCleaner.new
       end
@@ -18,6 +16,8 @@ module Poetry
       end
 
       private
+
+      attr_reader :hash_cleaner
 
       def clean_result(result)
         hash_cleaner.clean(result)

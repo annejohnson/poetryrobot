@@ -16,6 +16,9 @@ module TwitterBot
 
     private
 
+    attr_reader :max_num_mentions,
+                :max_num_hashtags
+
     def is_spammy_tweet?(tweet_str)
       contains_link?(tweet_str) &&
         tweet_str.match(/(buy)|(e-?book)|(order)|(press)/i)
@@ -29,14 +32,14 @@ module TwitterBot
       num_mentions = tweet_str.split.count do |word|
         word.start_with?('@')
       end
-      num_mentions > @max_num_mentions
+      num_mentions > max_num_mentions
     end
 
     def has_too_many_hashtags?(tweet_str)
       num_hashtags = tweet_str.split.count do |word|
         word.start_with?('#')
       end
-      num_hashtags > @max_num_hashtags
+      num_hashtags > max_num_hashtags
     end
 
     def contains_link?(tweet_str)

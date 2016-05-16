@@ -49,7 +49,8 @@ module TwitterBot
 
     private
 
-    attr_reader :twitter_content_preparer, :twitter_client
+    attr_reader :twitter_content_preparer,
+                :twitter_client
 
     def tweet_to_retweet
       get_topic_tweets.max_by(&:favorite_count)
