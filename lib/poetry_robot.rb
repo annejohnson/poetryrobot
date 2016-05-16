@@ -8,4 +8,6 @@ require_relative 'twitter_content_preparer.rb'
 require_relative 'poetry_content_preparer.rb'
 require_relative 'tweet_filterer.rb'
 require_relative 'twitter_topic_robot.rb'
-require_relative 'twitter_wrapper.rb'
+
+require_relative 'twitter.rb'
+require_relative 'twitter/client.rb'

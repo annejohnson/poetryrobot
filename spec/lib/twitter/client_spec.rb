@@ -1,7 +1,7 @@
 require './spec/spec_helper.rb'
 require 'yaml'
 
-describe TwitterWrapper do
+describe Twitter::Client do
   let(:credentials) do
     YAML.load(
       File.open('twitter.yml', &:read)
