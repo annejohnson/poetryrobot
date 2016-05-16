@@ -1,7 +1,7 @@
 require 'twitter'
 require 'forwardable'
 
-module Twitter
+module TwitterBot
   class Client
     extend Forwardable
 
@@ -14,7 +14,7 @@ module Twitter
 
     def initialize(credentials)
       @credentials = Hash[credentials.map { |k, v| [k.to_s, v] }]
-      @tweet_filterer = Twitter::TweetFilterer.new
+      @tweet_filterer = TwitterBot::TweetFilterer.new
       @max_num_tweets_per_query = 60
     end
 

@@ -1,5 +1,5 @@
 module Poetry
-  class ContentPreparer < Twitter::ContentPreparer::Base
+  class ContentPreparer < TwitterBot::ContentPreparer::Base
     def prepare_tweet
       poem_hash_to_tweet(get_poem_hash)
     end

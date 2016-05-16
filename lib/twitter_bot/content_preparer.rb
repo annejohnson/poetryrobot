@@ -1,4 +1,4 @@
-module Twitter
+module TwitterBot
   module ContentPreparer
   end
 end

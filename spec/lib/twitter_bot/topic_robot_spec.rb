@@ -1,6 +1,6 @@
 require './spec/spec_helper.rb'
 
-describe Twitter::TopicRobot do
+describe TwitterBot::TopicRobot do
   let(:content_preparer) { PoetryContentPreparer.new }
   let(:robot) { described_class.new(content_preparer) }
 

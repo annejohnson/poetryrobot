@@ -1,6 +1,6 @@
 require './spec/spec_helper.rb'
 
-describe Twitter::TweetFilterer do
+describe TwitterBot::TweetFilterer do
   describe '#acceptable_tweet?' do
     context 'when a tweet contains bad words' do
       let(:tweet_with_bad_words) { 'Fuck you, asshole!' }

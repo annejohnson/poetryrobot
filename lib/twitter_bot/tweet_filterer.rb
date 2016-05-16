@@ -1,4 +1,4 @@
-module Twitter
+module TwitterBot
   class TweetFilterer
     def initialize(options = {})
       @max_num_mentions = options[:max_num_mentions] || 1

@@ -1,4 +1,4 @@
-module Twitter
+module TwitterBot
   module ContentPreparer
     class Base
       MAX_TWEET_LENGTH = 140
