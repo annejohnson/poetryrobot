@@ -58,7 +58,7 @@ class TwitterWrapper
     )
   end
 
-  def reply_tweets
+  def replies
     tweets.select do |tweet|
       tweet.in_reply_to_status_id.to_s.match(/\d+/)
     end

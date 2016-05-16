@@ -104,10 +104,10 @@ describe TwitterWrapper do
     end
   end
 
-  describe '#reply_tweets' do
-    it 'gets reply tweets by the user' do
-      VCR.use_cassette 'reply_tweets' do
-        tweets = subject.reply_tweets
+  describe '#replies' do
+    it 'gets replies by the user' do
+      VCR.use_cassette 'replies' do
+        tweets = subject.replies
         tweets.each do |tweet|
           expect(tweet.user.screen_name).to eq(subject.username)
           expect(tweet.in_reply_to_status_id).not_to be_nil

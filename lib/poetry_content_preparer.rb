@@ -1,4 +1,5 @@
 require_relative 'twitter_content_preparer.rb'
+require_relative 'poetry_foundation_random_poem_scraper.rb'
 
 class PoetryContentPreparer < TwitterContentPreparer
   def prepare_tweet

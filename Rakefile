@@ -1,16 +1,18 @@
 require './lib/poetry_robot.rb'
 
 [
-  :tweet_poem,
-  :retweet_a_poet,
+  :tweet,
+  :retweet_someone,
+  :follow_someone,
   :retweet_mentions,
-  :follow_a_poet,
-  :reply_to_a_poet,
+  :reply_to_someone,
   :follow_followers
 ].each do |task_name|
   desc task_name.to_s.gsub('_', ' ').capitalize
   task task_name do
-    PoetryRobot.new.send task_name
+    TwitterTopicRobot.new(
+      PoetryContentPreparer.new
+    ).send task_name
   end
 end
 
