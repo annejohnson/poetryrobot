@@ -16,7 +16,7 @@ require 'yaml'
                   )['twitter']
 
     Twitter::TopicRobot.new(
-      PoetryContentPreparer.new,
+      Poetry::ContentPreparer.new,
       credentials
     ).send task_name
   end
@@ -24,7 +24,7 @@ end
 
 desc 'Run tests'
 task :test do
-  system("rspec #{__dir__}/spec/**/*.rb")
+  system("rspec #{__dir__}/spec")
 end
 
 task default: %w[test]
