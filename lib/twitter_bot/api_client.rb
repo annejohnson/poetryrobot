@@ -2,7 +2,7 @@ require 'twitter'
 require 'forwardable'
 
 module TwitterBot
-  class Client
+  class ApiClient
     extend Forwardable
 
     MAX_TWEET_LENGTH = 140

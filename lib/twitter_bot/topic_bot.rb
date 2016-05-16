@@ -2,7 +2,7 @@ module TwitterBot
   class TopicBot
     def initialize(twitter_content_preparer, credentials)
       @twitter_content_preparer = twitter_content_preparer
-      @twitter_client = TwitterBot::Client.new(credentials)
+      @twitter_client = TwitterBot::ApiClient.new(credentials)
     end
 
     def tweet
