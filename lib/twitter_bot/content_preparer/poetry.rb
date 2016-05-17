@@ -19,7 +19,7 @@ module TwitterBot
       private
 
       def poem_scraper
-        ::Poetry::Scraper::PoetryFoundationScraper.new
+        ::Poetry::Scraper::PoetryDotNetScraper.new
       end
 
       def get_poem_hash
