@@ -6,6 +6,7 @@ require_relative 'poetry.rb'
 require_relative 'poetry/scraper.rb'
 require_relative 'poetry/scraper/base.rb'
 require_relative 'poetry/scraper/poetry_foundation_scraper.rb'
+require_relative 'poetry/scraper/poetry_dot_net_scraper.rb'
 
 require_relative 'twitter_bot.rb'
 require_relative 'twitter_bot/content_preparer.rb'

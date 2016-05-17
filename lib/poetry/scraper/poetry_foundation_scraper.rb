@@ -1,6 +1,3 @@
-require 'open-uri'
-require 'nokogiri'
-
 module Poetry
   module Scraper
     class PoetryFoundationScraper < Poetry::Scraper::Base
@@ -9,31 +6,7 @@ module Poetry
       MIN_ID = 43000
       MAX_ID = 49990
 
-      MAX_ATTEMPTS = 10
-
-      def get_raw_poem_hash
-        url = get_url
-        page = get_page(url)
-
-        {
-          title: get_title_from_page(page),
-          author: get_author_from_page(page),
-          url: url,
-          lines: get_lines_from_page(page)
-        }
-      end
-
       private
-
-      def get_page(url)
-        attempts = 0
-        begin
-          Nokogiri::HTML(open(url))
-        rescue OpenURI::HTTPError
-          attempts += 1
-          retry if attempts < MAX_ATTEMPTS
-        end
-      end
 
       def get_url
         "#{BASE_URL}/poetrymagazine/poems/detail/#{random_poem_id}"
