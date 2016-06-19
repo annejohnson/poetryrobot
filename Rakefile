@@ -16,7 +16,7 @@ task :default do
   bot = TwitterTopicBot.new(content_preparer, credentials)
 
   bot.schedule do |schedule|
-    schedule.cron('25 * * * *') { bot.tweet }
+    schedule.cron('25 7,11,17 * * *') { bot.tweet }
     schedule.cron('*/30 * * * *') { bot.retweet_someone }
     schedule.cron('40 * * * *') { bot.retweet_mentions }
     schedule.cron('55 */12 * * *') { bot.follow_followers }
