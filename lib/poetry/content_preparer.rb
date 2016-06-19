@@ -11,7 +11,7 @@ module Poetry
       ].sample
     end
 
-    def topic_search_string
+    def topic_string
       '#' + ['poetry', 'poem'].sample
     end
 
